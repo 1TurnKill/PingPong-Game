@@ -1,0 +1,16 @@
+Scope ของ Python
+มี 2 อย่างคือ Global Scope เเละ Local Scope 
+ปล.Local Scope จะอยู่ภายใน Global Scope
+**หากมีการประกาศตัวเเปรใน functions 
+=> หมายความว่าเราสร้างตัวเเปร ใน Local Scope
+เเต่ตัวเเปรใน Local Scope ไม่สามารถใช้ใน Global Scope ได้
+เเม้ตัวเเปรใน Global Scope จะเหมือน Local Scope ก็ตาม
+
+ซึ่งวิธีการเเก้มี2อย่างคือ
+*หากต้องการให้ตัวเเปรใน Global Scope สามารถใช้ได้ใน functions ของ Local Scope
+วิธีเเรก => ให้ใช้ global ตามด้วยตัวชื่อตัวเเปรของ Global Scope ใน functions
+Ex. def ball_animation():
+    # Movement
+    global ball_speed_x,ball_speed_y
+ปล. วิธีเเรกจะสามารถใช้กับโปรเเกรมง่ายๆเท่านั้น  
+วิธีที่สอง => ใช้ return ไม่ก็ class

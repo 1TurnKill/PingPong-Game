@@ -91,6 +91,7 @@ while True:
             if event.key == pygame.K_UP: # ถ้ามีเหตุการณ์ที่ปล่อยลูกศรขึ้น
                 player_speed += 7 # player_speed = -7 จาก pygame.K_UP(pygame.KEYDOWN) => player_speed + 7 => player_speed = 0 => player.y + player_speed = 0 --> player หยุดนิ่ง
 
+    # ตรรกะการทำงานของเกม
     ball_animation()
     player_animation()
     opponent_ai()

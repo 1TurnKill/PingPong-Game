@@ -1,0 +1,96 @@
+** เรามีการกำหนด ความเร็วของ loop เป็น 60ครั้ง/วินาที => พูดง่ายๆคือ ภายใน 1 วินาทีมีการวนรูป 60 ครั้ง
+1.เรามีการประกาศตัวเเปรที่ชื่อ score_time โดยที่ยังไม่มีการกำหนดค่าให้มัน (score_time = None)
+--------------------------------
+ตัดไปดู function ball_animation เเละ คำสั่ง if score_time ใน while loop
+--------------------------------
+def ball_animation():
+
+    if ball.left <= 0: # ถ้า ball ในตำเเหน่งด้านซ้าย <= 0 (ball เลยไปทางด้านซ้าย)
+        player_score += 1 # ให้ player_score + 1 
+        score_time = pygame.time.get_ticks() # ให้จับ tick ณ ขณะนั้น ปล.tick คือหน่วยเวลาเกม
+        
+    if ball.right >= screen_width: # ball ในตำเเหน่งด้านขวา >= screen_width (ball เลยไปทางด้านขวา)
+        opponent_score += 1 # ให้ opponent_score + 1 
+        score_time = pygame.time.get_ticks() # ให้จับ tick ณ ขณะนั้น ปล.tick คือหน่วยเวลาเกม
+
+while True: 
+
+if score_time: # หาก score_time มีค่า => หากมีผู้เล่นฝั้งใดฝั้งนึงทำเเต้มได้ scroe_time ก็จะมีนับค่า tick ณ ขณะนั้น จึงส่งผลให้ scrore_time มีค่า
+    ball_start() # จะมีการเรียกใช้ ball_start()
+--------------------------------
+ตัดไปดู function ball_start
+--------------------------------
+def ball_start():
+
+    ball.center = (screen_width/2,screen_height/2) # ให้ ball อยู่ตรงกลาง
+    current_time = pygame.time.get_ticks() # ให้จับ tick ณ ขณะนั้น ปล.tick คือหน่วยเวลาเกม
+    
+    if current_time - score_time < 2100: # ถ้า current_time - score_time น้อยกว่า 2100 มิลลิวินาที 
+                                         # ปล.score_time จะเป็นตัวเเปรที่รับค่า tick เพียงครั้งเดียว เพราะ เราเขียนให้ score_time จะมีการรับค่า tick เเค่ตอนที่มีฝั้งใดฝั้งนึงทำเเต้มได้ เท่านั้น
+        ball_speed_x,ball_speed_y = 0,0  # ปล.current_time จะเป็นตัวเเปรที่รับค่า tick ครั้งเดียวเหมือนกัน score_time เเต่เนื่องจาก function ของ current_time (ball_start) อยู่ใน While loop ซึ่งถูกเรียกใช้หลายๆครั้ง
+                                         # จึงส่งให้ current_time รับค่า tick เพิ่มขึ้นเรื่อยๆ
+    else:
+        ball_speed_y = 7 * random.choice((1,-1)) # ให้ ball_speed_y มีการ * 1 ไม่ก็ -1 => ส่งผลต่อการเคลื่อนที่ 
+        ball_speed_x = 7 * random.choice((1,-1)) # ให้ ball_speed_x มีการ * 1 ไม่ก็ -1 => ส่งผลต่อการเคลื่อนที่
+        score_time = None
+
+ตัวอย่างเหตุการณ์
+มีการกำหนดให้ score_time = None (ไม่มีค่า)
+
+=> เฟรมที่ 1
+def ball_animation():
+  มีผู้เล่นฝั้งใดฝั้งนึงทำเเต้มได้ 
+  ส่งผลให้ scroe_time มีการนับค่า tick ณ ขณะนั้น -> scrore_time มีค่า
+
+while True: 
+if score_time: 
+    ball_start()
+  พอ score_time มีค่า จะมีการเรียกใช้ function ball_start
+
+def ball_start():
+  ลูกบอล จะกลับไปอยู่ตรงกลาง
+  ส่งผลให้ current_time มีนับค่า tick ณ ขณะนั้น
+  พอนำ current_time current_time - score_time เเละน้อยกว่า 2100
+  ส่งผลให้ บอล ไม่มีความเร็วทั้งเเกน x เเละเเกน y (บอลหยุดนิ่ง)
+
+=> เฟรมที่ 2
+def ball_start():
+  จากเฟรมที่ 1 ที่ทำให้บอลหยุดนิ่งอยู่ตรงกลาง ส่งผลให้
+  score_time ไม่มีการรับ tick เพิ่ม => score_time ไม่มีค่าเพิ่มขึ้น(เท่าเดิม) เพราะ ไม่มีผู้เล่นฝั้งใดฝั้งนึงทำเเต้มได้
+  current_time มีการรับ tick เพิ่ม => current_time มีค่าเพิ่มขึ้น         เพราะ ลูกบอลยังอยู่ตรงกลาง
+  พอนำ current_time current_time - score_time เเละน้อยกว่า 2100
+  ส่งผลให้ บอล ไม่มีความเร็วทั้งเเกน x เเละเเกน y (บอลหยุดนิ่ง)
+
+=> เฟรมที่ 3
+def ball_start():
+  จากเฟรมที่ 2 ที่ทำให้บอลหยุดนิ่งอยู่ตรงกลาง ส่งผลให้
+  score_time ไม่มีการรับ tick เพิ่ม => score_time ไม่มีค่าเพิ่มขึ้น(เท่าเดิม) เพราะ ไม่มีผู้เล่นฝั้งใดฝั้งนึงทำเเต้มได้
+  current_time มีการรับ tick เพิ่ม => current_time มีค่าเพิ่มขึ้น         เพราะ ลูกบอลยังอยู่ตรงกลาง
+  พอนำ current_time current_time - score_time เเละน้อยกว่า 2100
+  ส่งผลให้ บอล ไม่มีความเร็วทั้งเเกน x เเละเเกน y (บอลหยุดนิ่ง)
+
+  .
+  .
+  .
+  . เฟรมที่ผ่านไปจะส่งผลให้ score_time มีค่าเท่าเดิม เเต่ current_time มีค่ามากขึ้น
+  .
+  .
+  .
+  .
+  .
+  .
+
+=> เฟรมที่ 10
+def ball_start():
+  จากเฟรมที่ 9 ที่ทำให้บอลหยุดนิ่งอยู่ตรงกลาง ส่งผลให้
+  score_time ไม่มีการรับ tick เพิ่ม => score_time ไม่มีค่าเพิ่มขึ้น(เท่าเดิม) เพราะ ไม่มีผู้เล่นฝั้งใดฝั้งนึงทำเเต้มได้
+  current_time มีการรับ tick เพิ่ม => current_time มีค่าเพิ่มขึ้น         เพราะ ลูกบอลยังอยู่ตรงกลาง
+  พอนำ current_time current_time - score_time เเละมากกว่า 2100
+  ส่งผลให้ บอล มีความเร็วทั้งเเกน x เเละ y (บอลเคลื่อนที่) โดยจะเคลื่อนที่เเบบสุ่มทิศทาง
+  เเละทำให้ score_time = None (ไม่มีค่า) อีกครั้งนึง
+
+***เฟรมที่เหลือ ก็จะหลักการเหมือนกับ เฟรมที่ 1 - 10
+
+
+
+

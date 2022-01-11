@@ -1,0 +1,10 @@
+text ใน pygame
+Ex.
+game_font = pygame.font.Font("Font/PressStart2P-vaV7.ttf",32) # นำ font เข้า --> เป็น Font PressStart2P ขนาด 32px 
+
+player_score = 0
+dark_red = (139,0,0) # ใช้เเบบ RGB 
+
+while True: 
+player_text = game_font.render(f"{player_score}",False,dark_red) # ปล.การปรับค่าเป็น False จะทำให้ตัวอักษรไม่ลบรอยหยัก -> ตัวอักษรขรุขระ
+screen.blit(player_text,(660,470)) # นำ surface(player_text) ของ player_score มาวางบน scrren โดยกำหนดให้อยู่พิกัด x = 660 y = 470

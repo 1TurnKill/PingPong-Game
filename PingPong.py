@@ -7,18 +7,37 @@ def ball_animation():
     ball.y += ball_speed_y # กำหนดให้ความเร็วบอลในการเคลื่อนที่เเกน y + ball_speed_y 
     
     if ball.top <= 0 or ball.bottom >= screen_height: # ถ้า ball ในตำเเหน่งด้านบน <= 0 หรือ ball ในตำเเหน่งด้านล่าง >= screen_height
+        pygame.mixer.Sound.play(pong_sound) # ให้มีการเล่นเสียง pong_sound
         ball_speed_y *= -1 # ball_speed_y = 7 จาก การตั้งค่าในตอนเเรก => ball_speed_y * -1 => ball_speed_y = -7 => ball.y + ball_speed_y = -7 --> ball เด้งตรงข้ามในเเกน y
   
     if ball.left <= 0: # ถ้า ball ในตำเเหน่งด้านซ้าย <= 0 (ball เลยไปทางด้านซ้าย)
+        pygame.mixer.Sound.play(score_sound) # ให้มีการเล่นเสียง pong_sound
         player_score += 1 # ให้ player_score + 1 
         score_time = pygame.time.get_ticks() # ให้จับ tick ณ ขณะนั้น ปล.tick คือหน่วยเวลาเกม
         
     if ball.right >= screen_width: # ball ในตำเเหน่งด้านขวา >= screen_width (ball เลยไปทางด้านขวา)
+        pygame.mixer.Sound.play(score_sound) # ให้มีการเล่นเสียง pong_sound
         opponent_score += 1 # ให้ opponent_score + 1 
         score_time = pygame.time.get_ticks() # ให้จับ tick ณ ขณะนั้น ปล.tick คือหน่วยเวลาเกม
     
-    if ball.colliderect(player) or ball.colliderect(opponent): # ถ้า ball ชนกับ player หรือ ball ชนกับ opponent
-        ball_speed_x *= -1 # ball เด้งตรงข้ามในเเกน x
+    if ball.colliderect(player) and ball_speed_x > 0: # ถ้า ball ชนกับ player เเละ ความเร็วของบอลในเเเกน x เป็น + (บอลเคลื่อนที่ไปทางขวา)
+        pygame.mixer.Sound.play(pong_sound) # ให้มีการเล่นเสียง pong_sound
+        if abs(ball.right - player.left) < 10: # ค่าสัมบูรณ์ ของ บอลในตำเเหน่งด้านขวา - player ในตำเเหน่งด้านซ้าย < 10
+            ball_speed_x *= -1 # ball เด้งตรงข้ามในเเกน x
+        elif abs(ball.bottom - player.top) < 10 and ball_speed_y > 0: # ค่าสัมบูรณ์ ของ บอลในตำเเหน่งด้านล่าง - player ในตำเเหน่งด้านบน < 10 เเละ ความเร็วของบอลในเเเกน y เป็น + (บอลเคลื่อนที่ลงมา)
+            ball_speed_y *= -1 # ball เด้งตรงข้ามในเเกน y
+        elif abs(ball.top - player.bottom) < 10 and ball_speed_y < 0: # ค่าสัมบูรณ์ ของ บอลในตำเเหน่งด้านล่าง - player ในตำเเหน่งด้านบน < 10 เเละ ความเร็วของบอลในเเเกน y เป็น - (บอลเคลื่อนที่ขึ้นมา)
+            ball_speed_y *= -1 # ball เด้งตรงข้ามในเเกน y
+
+
+    if ball.colliderect(opponent) and ball_speed_x < 0: # หรือ ball ชนกับ opponent เเละ ความเร็วของบอลในเเเกน x เป็น - (บอลเคลื่อนที่ไปทางซ้าย)
+        pygame.mixer.Sound.play(pong_sound) # ให้มีการเล่นเสียง pong_sound
+        if abs(ball.left - opponent.right) < 10: # ค่าสัมบูรณ์ ของ บอลในตำเเหน่งด้านซ้าย - opponent ในตำเเหน่งด้านขวา < 10
+            ball_speed_x *= -1 # ball เด้งตรงข้ามในเเกน x
+        elif abs(ball.bottom - opponent.top) < 10 and ball_speed_y > 0: # ค่าสัมบูรณ์ ของ บอลในตำเเหน่งด้านล่าง - opponent ในตำเเหน่งด้านบน < 10 เเละ ความเร็วของบอลในเเเกน y เป็น + (บอลเคลื่อนที่ลงมา)
+            ball_speed_y *= -1 # ball เด้งตรงข้ามในเเกน y
+        elif abs(ball.top - opponent.bottom) < 10 and ball_speed_y < 0: # ค่าสัมบูรณ์ ของ บอลในตำเเหน่งด้านล่าง - opponent ในตำเเหน่งด้านบน < 10 เเละ ความเร็วของบอลในเเเกน y เป็น - (บอลเคลื่อนที่ขึ้นมา)
+            ball_speed_y *= -1 # ball เด้งตรงข้ามในเเกน y
     
     
 def player_animation():
@@ -70,14 +89,18 @@ def ball_start():
         ball_speed_x = 7 * random.choice((1,-1)) # ให้ ball_speed_x มีการ * 1 ไม่ก็ -1 => ส่งผลต่อการเคลื่อนที่
         score_time = None
 
-
+# การตั้งค่าเริ่มต้น
+pygame.mixer.pre_init(44100,-16,2,512) # pygame.mixer.pre_init(ความถี่เสียง(44100 ค่าเริ่มต้น),ความเเม่นยำ(-16 ค่าเริ่มต้น),ความเเม่นยำ(2 ค่าเริ่มต้น),บัฟเฟอร์(4096 ค่าเริ่มต้น)) 
+                                       # ปล. บัฟเฟอร์ คือ คุณภาพของเสียง
+                                       # 4096 เป็นค่าสูงสุดของบัฟเฟอร์ -> 512 คือคุณภาพเสียงที่ดีสุด ต่ำกว่าเสียงจะเริ่มเเย่  
 pygame.init() # เริ่มต้นโมดูลของ pygame ทั้งหมด เเละ ไว้ใช้สำหรับ run เกมชนิดต่างๆ
-clock = pygame.time.Clock() # การกำหนดความเร็วในการทำงานของ loop => ตัวกำหนดค่า fps
+clock = pygame.time.Clock() # การกำหนดความเร็วในการทำงานของ loop => ตัวกำหนดค่า fps  
 
+# ตัว Window หลัก
 screen_width = 1280 # ขนาดความกว้างของหน้าจอ
 screen_height = 960 # ขนาดความสูงของหน้าจอ
 screen = pygame.display.set_mode((screen_width,screen_height)) # ขนาดหน้าจอ
-pygame.display.set_caption('Pong') # เป็นการตั้งชื่อหน้าต่างว่า Pong
+pygame.display.set_caption('PingPong Game') # เป็นการตั้งชื่อหน้าต่างว่า Pong
 
 # สร้าง Rectangle
 # ball
@@ -98,15 +121,21 @@ dark_red = (139,0,0) # ใช้เเบบ RGB
 ball_speed_x = 7 * random.choice((1,-1)) # ball_speed_x เท่ากับ 7 เเละให้มีการคูณ 1 หรือ -1
 ball_speed_y = 7 * random.choice((1,-1)) # ball_speed_y เท่ากับ 7 เเละให้มีการคูณ 1 หรือ -1
 player_speed = 0 # player_speed เท่ากับ 0
-opponent_speed = 7 # player_speed เท่ากับ 0
+opponent_speed = 7 # opponent_speed เท่ากับ 7
 
-# Text ตัวเเปร
+# Text Score (ตัวอักษรคะเเนน)
 player_score = 0
 opponent_score = 0
-game_font = pygame.font.Font("Font/PressStart2P-vaV7.ttf",32) # นำ font เข้า --> เป็น Font PressStart2P ขนาด 32px 
+game_font = pygame.font.Font("Font/PressStart2P-vaV7.ttf",32) # นำ font เข้า --> เป็น Font PressStart2P ขนาด 32px
+
+
+# Sound (เสียง)
+pong_sound = pygame.mixer.Sound("Sound/pong.ogg") # นำ เสียงกระทบ เข้า
+score_sound = pygame.mixer.Sound("Sound/score.ogg") # นำ ได้เเต้ม เข้า
+
 
 # Score Timer (ตัวเเปรสำหรับเก็บค่าเวลา)
-score_time = None # ปล.ยังไม่มีการกำหนดค่าให้กับ score_time
+score_time = True 
 
 # while loop = ให้เกมมีการอัพเดต
 # for loop   = ตรวจการกระทำของผู้ใช้ทั้งหมด
